@@ -1,0 +1,1175 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+
+   "dataFactoryLocation": {
+    "type": "string",
+    "defaultValue": "[resourceGroup().location]",
+    "minLength": 3,
+    "maxLength": 11,
+    "metadata": {
+      "description":"data factory location"
+    }
+  },
+
+  "wpaAppDataFactoryName": {
+    "type": "string",
+    "defaultValue": "wpadatafeed",
+    "minLength": 3,
+    "maxLength": 25,
+    "metadata": {
+      "description":  "data factory name"
+    }
+  },
+
+   "copyToBlobStorageMode": {
+    "type": "string",
+    "defaultValue": "all",
+    "minLength": 3,
+    "maxLength": 11,
+    "metadata": {
+      "description":  "what data to copy"
+    }
+  },
+
+   "wpaSourceODataFeedQuery": {
+    "type": "string",
+    "defaultValue": "",
+    "metadata": {
+      "description":  "odata uery"
+    }
+  },
+
+
+   "wpaSourceODataFeedUrl": {
+    "type": "string",
+    "defaultValue": "",
+    "metadata": {
+      "description":  "endpoint url"
+    }
+  },
+  "wpaStorageContainerName": {
+    "type": "string",
+    "defaultValue": "wpaexports",
+    "metadata": {
+        "description": "Specifies the name of the blob container to which the wpa feed to be exported."
+    }
+},
+
+    "wpaAppStorageAccType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_ZRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "Storage Account type"
+      }
+    },
+    "wpaAppStorageAccNamePrefix": {
+      "type": "string",
+      "defaultValue": "storage",
+      "minLength": 3,
+      "maxLength": 25,
+      "metadata": {
+        "description":  "Prefix for the Storage Acc name to be combined with the unique string"
+      }
+    }
+  },
+
+  "variables": {
+
+      "dataFactoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'))]",
+      "storageAccName": "[concat(parameters('wpaAppStorageAccNamePrefix'), uniqueString(resourceGroup().id))]"
+
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('factoryName'), '/pipeline1')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "activities": [{
+          "name": "CopyToBlobStorage",
+          "type": "Copy",
+          "dependsOn": [],
+          "policy": {
+            "timeout": "7.00:00:00",
+            "retry": 0,
+            "retryIntervalInSeconds": 30,
+            "secureOutput": false,
+            "secureInput": false
+          },
+          "userProperties": [],
+          "typeProperties": {
+            "source": {
+              "type": "ODataSource",
+              "httpRequestTimeout": "00:05:00"
+            },
+            "sink": {
+              "type": "DelimitedTextSink",
+              "storeSettings": {
+                "type": "AzureBlobStorageWriteSettings"
+              },
+              "formatSettings": {
+                "type": "DelimitedTextWriteSettings",
+                "quoteAllText": true,
+                "fileExtension": ".txt"
+              }
+            },
+            "enableStaging": false,
+            "translator": {
+              "type": "TabularTranslator",
+              "mappings": [{
+                "source": {
+                  "name": "PersonId",
+                  "type": "String"
+                },
+                "sink": {
+                  "type": "String",
+                  "ordinal": 1
+                }
+              }, {
+                "source": {
+                  "name": "Date",
+                  "type": "DateTimeOffset"
+                },
+                "sink": {
+                  "type": "DateTimeOffset",
+                  "ordinal": 2
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_23_24",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 3
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_22_23",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 4
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_21_22",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 5
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_20_21",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 6
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_19_20",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 7
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_18_19",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 8
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_17_18",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 9
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_16_17",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 10
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_15_16",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 11
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_14_15",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 12
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_13_14",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 13
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_12_13",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 14
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_11_12",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 15
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_10_11",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 16
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_09_10",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 17
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_08_09",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 18
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_07_08",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 19
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_06_07",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 20
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_05_06",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 21
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_04_05",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 22
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_03_04",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 23
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_02_03",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 24
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_01_02",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 25
+                }
+              }, {
+                "source": {
+                  "name": "Unscheduled_calls_00_01",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 26
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_23_24",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 27
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_22_23",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 28
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_21_22",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 29
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_20_21",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 30
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_19_20",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 31
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_18_19",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 32
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_17_18",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 33
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_16_17",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 34
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_15_16",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 35
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_14_15",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 36
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_13_14",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 37
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_12_13",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 38
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_11_12",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 39
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_10_11",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 40
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_09_10",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 41
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_08_09",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 42
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_07_08",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 43
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_06_07",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 44
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_05_06",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 45
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_04_05",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 46
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_03_04",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 47
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_02_03",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 48
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_01_02",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 49
+                }
+              }, {
+                "source": {
+                  "name": "IMs_sent_00_01",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 50
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_23_24",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 51
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_22_23",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 52
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_21_22",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 53
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_20_21",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 54
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_19_20",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 55
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_18_19",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 56
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_17_18",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 57
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_16_17",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 58
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_15_16",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 59
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_14_15",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 60
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_13_14",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 61
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_12_13",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 62
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_11_12",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 63
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_10_11",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 64
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_09_10",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 65
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_08_09",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 66
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_07_08",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 67
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_06_07",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 68
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_05_06",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 69
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_04_05",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 70
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_03_04",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 71
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_02_03",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 72
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_01_02",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 73
+                }
+              }, {
+                "source": {
+                  "name": "Emails_sent_00_01",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 74
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_23_24",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 75
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_22_23",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 76
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_21_22",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 77
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_20_21",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 78
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_19_20",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 79
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_18_19",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 80
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_17_18",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 81
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_16_17",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 82
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_15_16",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 83
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_14_15",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 84
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_13_14",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 85
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_12_13",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 86
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_11_12",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 87
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_10_11",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 88
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_09_10",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 89
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_08_09",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 90
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_07_08",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 91
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_06_07",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 92
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_05_06",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 93
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_04_05",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 94
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_03_04",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 95
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_02_03",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 96
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_01_02",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 97
+                }
+              }, {
+                "source": {
+                  "name": "Meetings_00_01",
+                  "type": "Int64"
+                },
+                "sink": {
+                  "type": "Int64",
+                  "ordinal": 98
+                }
+              }, {
+                "source": {
+                  "name": "LevelDesignation",
+                  "type": "String"
+                },
+                "sink": {
+                  "type": "String",
+                  "ordinal": 99
+                }
+              }, {
+                "source": {
+                  "name": "Organization",
+                  "type": "String"
+                },
+                "sink": {
+                  "type": "String",
+                  "ordinal": 100
+                }
+              }, {
+                "source": {
+                  "name": "TimeZone",
+                  "type": "String"
+                },
+                "sink": {
+                  "type": "String",
+                  "ordinal": 101
+                }
+              }, {
+                "source": {
+                  "name": "IsActive",
+                  "type": "Boolean"
+                },
+                "sink": {
+                  "type": "Boolean",
+                  "ordinal": 102
+                }
+              }]
+            }
+          },
+          "inputs": [{
+            "referenceName": "ODataWPASource",
+            "type": "DatasetReference",
+            "parameters": {}
+          }],
+          "outputs": [{
+            "referenceName": "TargetDataset",
+            "type": "DatasetReference",
+            "parameters": {}
+          }]
+        }],
+        "annotations": []
+      },
+      "dependsOn": ["[concat(variables('factoryId'), '/datasets/ODataWPASource')]", "[concat(variables('factoryId'), '/datasets/TargetDataset')]"]
+    },
+
+    {
+      "name": "WPAODataConnection",
+      "type": "Microsoft.DataFactory/factories/linkedservices",
+      "properties": {
+        "description": "WPAODataConnection",
+        "annotations": [],
+        "type": "OData",
+        "typeProperties": {
+          "url": "https://workplaceanalytics.office.com/10c5ca3c-a4d2-424d-8af3-f0efd6c79c99/scopes/217c5147-e12b-448c-9672-25b79a9ec0f0/jobsodata/40254f7d-3957-4001-bcf7-aeb8d109be36/Person",
+          "authenticationType": "AadServicePrincipal",
+          "tenant": "",
+          "aadResourceId": "https://workplaceanalytics.office.com",
+          "aadServicePrincipalCredentialType": "ServicePrincipalKey",
+          "servicePrincipalId": "",
+          "encryptedCredential": ""
+        }
+      }
+    },
+    {
+      "name": "WPABlobStorageConnection",
+      "type": "Microsoft.DataFactory/factories/linkedservices",
+      "properties": {
+        "annotations": [],
+        "type": "AzureBlobStorage",
+        "typeProperties": {
+          "connectionString": "",
+          "encryptedCredential": ""
+        }
+      }
+    },
+
+    {
+      "name": "[concat(parameters('factoryName'), '/ODataWPASource')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "[parameters('WPAODataConnection')]",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "ODataResource",
+        "schema": [],
+        "typeProperties": {
+          "path": "Persons"
+        }
+      },
+      "dependsOn": []
+    }, {
+      "name": "[concat(parameters('factoryName'), '/TargetDataset')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "[parameters('WPABlobStorageConnection')]",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "result.csv",
+            "folderPath": "result-",
+            "container":  "[parameters('wpaStorageContainerName')]"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "quoteChar": "\""
+        },
+        "schema": []
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('wpaAppStorageAccType')]"
+      },
+      "kind": "Storage",
+      "resources": [
+        {
+            "name": "[concat('default/', parameters('wpaStorageContainerName'))]",
+            "type": "blobServices/containers",
+            "apiVersion": "2018-07-01",
+            "dependsOn": [ "[variables('storageAccName')]"]
+        }
+    ]
+    }
+  ],
+  "outputs": {
+    "ResourceGroupName": {
+      "type": "string",
+      "value": "[resourceGroup().name]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccName')]"
+    },
+    "storageAccountLocation": {
+      "type": "string",
+      "value": "[resourceGroup().location]"
+    },
+    "storageAccountType": {
+      "type": "string",
+      "value": "[parameters('wpaAppStorageAccType')]"
+    }
+  }
+}
