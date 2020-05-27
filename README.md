@@ -47,6 +47,19 @@ $templatePath = "<path>"
 
 ```
 
+### Template Parameters
+
+```
+wpaAppStorageAccType
+wpaAppStorageAccNamePrefix
+wpaAppDataFactoryName
+wpaSourceODataFeedUrl
+wpaSourceODataFeedQuery
+copyToBlobStorageMode
+
+
+```
+
 
 ## Folder Structure
 ```
