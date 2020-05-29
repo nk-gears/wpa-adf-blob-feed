@@ -30,9 +30,9 @@ This document explains on how to Setup the Azure Data Factory and Access Data fr
      - `Install-Module -Name Az -AllowClobber -Scope CurrentUser`
 2. Login to your Azure Subscription
    - If you don't have an Azure account, sign up for free here: https://azure.microsoft.com/en-us/free/
-   - And then from PowerShell run: `Connect-AzureRmAccount`
+   - And then from PowerShell run: `Connect-AzureAzAccount`
    - If you you have multiple subcriptions, you will need to select the one you want to use:
-     - `Select-AzureRmSubscription`
+     - `Select-AzureAzSubscription`
 
 The following sections explains how this will be achieved.
 
@@ -50,12 +50,14 @@ $templatePath = "<path>"
 ### Template Parameters
 
 ```
+
 wpaAppStorageAccType
 wpaAppStorageAccNamePrefix
 wpaAppDataFactoryName
 wpaSourceODataFeedUrl
 wpaSourceODataFeedQuery
 copyToBlobStorageMode
+
 
 
 ```

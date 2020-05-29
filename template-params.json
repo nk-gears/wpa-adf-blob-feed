@@ -3,6 +3,12 @@
     "contentVersion":"1.0.0.0",
     "parameters":{
 
+        "wpaKeyVaultName":{
+            "value":"nkvault"
+        },
+        "wpaReaderAppSecretName":{
+            "value":"sampl1"
+        },
         "wpaAppStorageAccType":{
             "value":"Standard_LRS"
         },
