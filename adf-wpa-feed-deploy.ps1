@@ -3,10 +3,10 @@ Write-Host "Setting up Workplace Analytics Reader App..."
 #Get-AzureRmSubscription –SubscriptionName $subscriptionName | Select-AzureRmSubscription
 
 
-$reader_app_name = "NK WPA Data Reader App"
+$reader_app_name = "NK WPA Data Reader App final"
 $reader_app_role_name = "Analyst"
 $wpa_app_name = "Workplace Analytics"
-$resourceGroupName = "nkwpa-adf-setup-rg1"
+$resourceGroupName = "nkwpa-adf-setup-rg-final"
 $resourceGroupLocation = "eastus"
 
 
@@ -37,6 +37,7 @@ If ($ad_app -eq $null) {
 
 }
 
+    $ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
 	$appSecretIdentifier="DataReaderClientSecret"
 	# Create a Client Secret If not exists
 	$app_secretInfo=Get-AzureADApplicationPasswordCredential -ObjectId $ad_app.ObjectId
@@ -44,7 +45,7 @@ If ($ad_app -eq $null) {
 
 	$startDate = Get-Date
 	$endDate = $startDate.AddYears(3)
-	$ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
+
 	$appClientSecret = New-AzureADApplicationPasswordCredential -ObjectId $ad_app.ObjectId  -CustomKeyIdentifier $appSecretIdentifier -StartDate $startDate -EndDate $endDate
 
 	echo "Client Secret Created."
@@ -61,6 +62,7 @@ If ($ad_app -eq $null) {
 	# Prepare the necessary parameters for the template
 	$parameters = @{
 		wpaReaderAppId=$ad_app.AppId
+		wpaKeyVaultName=$parameters.wpaKeyVaultName.value
 		appServicePrincipalId= $appServicePrincipalId
 		wpaReaderAppSecretName= $appSecretIdentifier
 		wpaReaderAppSecretValue= $dataReaderAppClientSecret
@@ -99,12 +101,14 @@ If ($ad_app -eq $null) {
 
 
    echo "Assigning Permissions for the App to write to Blob Storage"
-   $stg_role=Get-AzRoleAssignment -ObjectId $ad_app.ObjectId -RoleDefinitionName "Storage Blob Data Contributor" -Scope $storageAcc.Id
+   $stg_role=Get-AzRoleAssignment -ObjectId $ad_App_sp.ObjectId -RoleDefinitionName "Storage Blob Data Contributor" -Scope $storageAcc.Id
+
+   If ($stg_role -eq $null) {
 
 
 	echo " Adding permissions for blob storage"
 	$role_for_storage=New-AzRoleAssignment -ObjectId $ad_App_sp.ObjectId -RoleDefinitionName "Storage Blob Data Contributor" -Scope $storageAcc.Id
 
+}
 
-
-
+echo "Deployment Completed."

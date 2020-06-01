@@ -11,10 +11,6 @@
                 "description": "data factory location"
             }
         },
-        "BlobDataset_properties_typeProperties_folderPath": {
-            "type": "string",
-            "defaultValue": "@{dataset().path}"
-        },
 
         "wpaAppDataFactoryName": {
             "type": "string",
@@ -59,7 +55,6 @@
 
         "wpaKeyVaultName": {
             "type": "string",
-            "defaultValue": "wpaReaderKeyVault",
             "metadata": {
                 "description": "Specifies the name of the vault to be created."
             }
@@ -134,33 +129,6 @@
             "identity":{"type":"SystemAssigned" },
             "resources":[
                 {
-                    "name": "[concat(variables('factoryName'), '/BlobDataset')]",
-                    "type": "Microsoft.DataFactory/factories/datasets",
-                    "apiVersion": "2018-06-01",
-                    "properties": {
-                        "linkedServiceName": {
-                            "referenceName": "AzureBlobStorageLS",
-                            "type": "LinkedServiceReference"
-                        },
-                        "parameters": {
-                            "path": {
-                                "type": "String"
-                            }
-                        },
-                        "annotations": [],
-                        "type": "AzureBlob",
-                        "typeProperties": {
-                            "folderPath": {
-                                "value": "[parameters('BlobDataset_properties_typeProperties_folderPath')]",
-                                "type": "Expression"
-                            }
-                        }
-                    },
-                    "dependsOn": [  "[variables('factoryName')]",
-                        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLS')]"
-                    ]
-                },
-                {
                     "name": "[concat(variables('factoryName'), '/CopyPipeline')]",
                     "type": "Microsoft.DataFactory/factories/pipelines",
                     "apiVersion": "2018-06-01",
@@ -168,7 +136,7 @@
 
                     "activities": [
                         {
-                            "name": "CopyFromBlobToBlob",
+                            "name": "CopyDataToBlob",
                             "type": "Copy",
                             "dependsOn": [],
                             "policy": {
@@ -185,7 +153,15 @@
                                     "httpRequestTimeout": "00:05:00"
                                 },
                                 "sink": {
-                                    "type": "BlobSink"
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobStorageWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
                                 },
                                 "enableStaging": false
                             },
@@ -198,28 +174,21 @@
                             ],
                             "outputs": [
                                 {
-                                    "referenceName": "BlobDataset",
+                                    "referenceName": "DelimitedTextDS",
                                     "type": "DatasetReference",
                                     "parameters": {}
                                 }
                             ]
                         }
                     ],
-                        "parameters": {
-                            "inputPath": {
-                                "type": "String"
-                            },
-                            "outputPath": {
-                                "type": "String"
-                            }
-                        },
+
                         "annotations": []
                     },
                     "dependsOn": [
 
                         "[variables('factoryName')]",
                         "[concat(variables('factoryId'), '/datasets/WPAODataDS')]",
-                        "[concat(variables('factoryId'), '/datasets/BlobDataset')]"
+                        "[concat(variables('factoryId'), '/datasets/DelimitedTextDS')]"
                     ]
                 },
 
@@ -233,7 +202,7 @@
                     "typeProperties": {
                         "url": "[parameters('wpaSourceODataFeedUrl')]",
                         "authenticationType": "AadServicePrincipal",
-                        "tenantId": "bd382938-3ba0-469f-8b45-fa06740d181f",
+                        "tenant": "[subscription().tenantId]",
                         "aadResourceId": "https://workplaceanalytics.office.com",
                         "aadServicePrincipalCredentialType": "ServicePrincipalKey",
                         "servicePrincipalId": "[parameters('wpaReaderAppId')]",
@@ -300,7 +269,7 @@
                         "serviceEndpoint": "[concat('https://',variables('storageAccName'), '.blob.core.windows.net')]",
 
                         "servicePrincipalId": "[parameters('wpaReaderAppId')]",
-                        "tenantId": "bd382938-3ba0-469f-8b45-fa06740d181f",
+                        "tenant": "[subscription().tenantId]",
                         "servicePrincipalKey": {
                             "type": "AzureKeyVaultSecret",
                             "store": {
@@ -403,6 +372,442 @@
             },
             "dependsOn": [
                 "[parameters('wpaKeyVaultName')]"
+            ]
+        },
+        {
+            "name": "[concat(variables('factoryName'), '/DelimitedTextDS')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorageLS",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "container": "wpaexports"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "PersonId",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Date",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_23_24",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_22_23",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_21_22",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_20_21",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_19_20",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_18_19",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_17_18",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_16_17",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_15_16",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_14_15",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_13_14",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_12_13",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_11_12",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_10_11",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_09_10",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_08_09",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_07_08",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_06_07",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_05_06",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_04_05",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_03_04",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_02_03",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_01_02",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unscheduled_calls_00_01",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_23_24",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_22_23",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_21_22",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_20_21",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_19_20",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_18_19",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_17_18",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_16_17",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_15_16",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_14_15",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_13_14",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_12_13",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_11_12",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_10_11",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_09_10",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_08_09",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_07_08",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_06_07",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_05_06",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_04_05",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_03_04",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_02_03",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_01_02",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IMs_sent_00_01",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_23_24",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_22_23",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_21_22",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_20_21",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_19_20",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_18_19",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_17_18",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_16_17",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_15_16",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_14_15",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_13_14",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_12_13",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_11_12",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_10_11",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_09_10",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_08_09",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_07_08",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_06_07",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_05_06",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_04_05",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_03_04",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_02_03",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_01_02",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Emails_sent_00_01",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_23_24",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_22_23",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_21_22",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_20_21",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_19_20",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_18_19",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_17_18",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_16_17",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_15_16",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_14_15",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_13_14",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_12_13",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_11_12",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_10_11",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_09_10",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_08_09",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_07_08",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_06_07",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_05_06",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_04_05",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_03_04",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_02_03",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_01_02",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Meetings_00_01",
+                        "type": "String"
+                    },
+                    {
+                        "name": "LevelDesignation",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Organization",
+                        "type": "String"
+                    },
+                    {
+                        "name": "TimeZone",
+                        "type": "String"
+                    },
+                    {
+                        "name": "IsActive",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLS')]"
             ]
         },
         {
