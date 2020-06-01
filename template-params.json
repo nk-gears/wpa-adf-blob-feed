@@ -3,20 +3,14 @@
     "contentVersion":"1.0.0.0",
     "parameters":{
 
-        "wpaKeyVaultName":{
-            "value":"nkvault"
-        },
-        "wpaReaderAppSecretName":{
-            "value":"sampl1"
-        },
         "wpaAppStorageAccType":{
             "value":"Standard_LRS"
         },
         "wpaAppStorageAccNamePrefix":{
-            "value":"nkwpa"
+            "value":"nkwpa1"
         },
         "wpaAppDataFactoryName":{
-            "value":"adf-wpa-feed"
+            "value":"NKADFTestNew2"
         },
         "wpaSourceODataFeedUrl":{
             "value":"https://workplaceanalytics.office.com/10c5ca3c-a4d2-424d-8af3-f0efd6c79c99/scopes/217c5147-e12b-448c-9672-25b79a9ec0f0/jobsodata/40254f7d-3957-4001-bcf7-aeb8d109be36/Person"

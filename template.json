@@ -11,6 +11,11 @@
                 "description": "data factory location"
             }
         },
+        "BlobDataset_properties_typeProperties_folderPath": {
+            "type": "string",
+            "defaultValue": "@{dataset().path}"
+        },
+
         "wpaAppDataFactoryName": {
             "type": "string",
             "defaultValue": "wpadatafeed",
@@ -36,6 +41,14 @@
                 "description": "odata uery"
             }
         },
+
+        "wpaReaderAppId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Azure AD APP Id"
+            }
+        },
         "wpaSourceODataFeedUrl": {
             "type": "string",
             "defaultValue": "",
@@ -55,7 +68,20 @@
             "type": "string",
             "defaultValue": "Sample",
             "metadata": {
-                "description": "Specifies the name of the blob container to which the wpa feed to be exported."
+                "description": "Specifies the secret name to be used in the vault for the OData reader app"
+            }
+        },
+        "wpaReaderAppSecretValue": {
+            "type": "string",
+            "defaultValue": "Sample",
+            "metadata": {
+                "description": "Specifies the secret value to be used in the vault for the OData reader app"
+            }
+        },
+        "appServicePrincipalId": {
+            "type": "string",
+            "metadata": {
+                "description": "App service principal Id"
             }
         },
 
@@ -91,17 +117,256 @@
         }
     },
     "variables": {
-        "dataFactoryName": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'))]",
-        "storageAccName": "[concat(parameters('wpaAppStorageAccNamePrefix'), uniqueString(resourceGroup().id))]",
-        "wpaReaderAppSecretValue":""
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
+        "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
+        "storageAccName": "[concat(parameters('wpaAppStorageAccNamePrefix'), uniqueString(resourceGroup().id))]"
+
 
     },
     "resources": [
+
+        {
+
+            "name":"[variables('factoryName')]",
+            "apiVersion":"2018-06-01",
+            "type":"Microsoft.DataFactory/factories",
+            "location":"[parameters('dataFactoryLocation')]",
+            "identity":{"type":"SystemAssigned" },
+            "resources":[
+                {
+                    "name": "[concat(variables('factoryName'), '/BlobDataset')]",
+                    "type": "Microsoft.DataFactory/factories/datasets",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "linkedServiceName": {
+                            "referenceName": "AzureBlobStorageLS",
+                            "type": "LinkedServiceReference"
+                        },
+                        "parameters": {
+                            "path": {
+                                "type": "String"
+                            }
+                        },
+                        "annotations": [],
+                        "type": "AzureBlob",
+                        "typeProperties": {
+                            "folderPath": {
+                                "value": "[parameters('BlobDataset_properties_typeProperties_folderPath')]",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "dependsOn": [  "[variables('factoryName')]",
+                        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLS')]"
+                    ]
+                },
+                {
+                    "name": "[concat(variables('factoryName'), '/CopyPipeline')]",
+                    "type": "Microsoft.DataFactory/factories/pipelines",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+
+                    "activities": [
+                        {
+                            "name": "CopyFromBlobToBlob",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "7.00:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "ODataSource",
+                                    "httpRequestTimeout": "00:05:00"
+                                },
+                                "sink": {
+                                    "type": "BlobSink"
+                                },
+                                "enableStaging": false
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "WPAODataDS",
+                                    "type": "DatasetReference",
+                                    "parameters": {}
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "BlobDataset",
+                                    "type": "DatasetReference",
+                                    "parameters": {}
+                                }
+                            ]
+                        }
+                    ],
+                        "parameters": {
+                            "inputPath": {
+                                "type": "String"
+                            },
+                            "outputPath": {
+                                "type": "String"
+                            }
+                        },
+                        "annotations": []
+                    },
+                    "dependsOn": [
+
+                        "[variables('factoryName')]",
+                        "[concat(variables('factoryId'), '/datasets/WPAODataDS')]",
+                        "[concat(variables('factoryId'), '/datasets/BlobDataset')]"
+                    ]
+                },
+
+            {
+                "name": "[concat(variables('factoryName'), '/WPAODataLS')]",
+                "type": "Microsoft.DataFactory/factories/linkedServices",
+                "apiVersion": "2018-06-01",
+                "properties": {
+                    "annotations": [],
+                    "type": "OData",
+                    "typeProperties": {
+                        "url": "[parameters('wpaSourceODataFeedUrl')]",
+                        "authenticationType": "AadServicePrincipal",
+                        "tenantId": "bd382938-3ba0-469f-8b45-fa06740d181f",
+                        "aadResourceId": "https://workplaceanalytics.office.com",
+                        "aadServicePrincipalCredentialType": "ServicePrincipalKey",
+                        "servicePrincipalId": "[parameters('wpaReaderAppId')]",
+                        "servicePrincipalKey": {
+                            "type": "AzureKeyVaultSecret",
+                            "store": {
+                                "referenceName": "AzureKeyVaultLS",
+                                "type": "LinkedServiceReference"
+                            },
+                            "secretName": "DataReaderClientSecret"
+                        }
+                    }
+                },
+                "dependsOn": [
+                    "[variables('factoryName')]",
+                    "[concat(variables('factoryId'), '/linkedServices/AzureKeyVaultLS')]"
+                ]
+            },
+            {
+                "name": "[concat(variables('factoryName'), '/AzureKeyVaultLS')]",
+                "type": "Microsoft.DataFactory/factories/linkedServices",
+                "apiVersion": "2018-06-01",
+                "properties": {
+                    "annotations": [],
+                    "type": "AzureKeyVault",
+                    "typeProperties": {
+                        "baseUrl": "[concat('https://',parameters('wpaKeyVaultName'), '.vault.azure.net/')]"
+                    }
+                },
+
+                "dependsOn": [
+                    "[variables('factoryName')]"
+                ]
+            },
+            {
+                "name": "[concat(variables('factoryName'), '/WPAODataDS')]",
+                "type": "Microsoft.DataFactory/factories/datasets",
+                "apiVersion": "2018-06-01",
+                "properties": {
+                    "linkedServiceName": {
+                        "referenceName": "WPAODataLS",
+                        "type": "LinkedServiceReference"
+                    },
+                    "annotations": [],
+                    "type": "ODataResource",
+                    "schema": [],
+                    "typeProperties": {
+                        "path": "Persons"
+                    }
+                },
+                "dependsOn": [
+                    "[variables('factoryName')]",
+                    "[concat(variables('factoryId'), '/linkedServices/WPAODataLS')]"
+                ]
+            },
+            {
+                "name": "[concat(variables('factoryName'), '/AzureBlobStorageLS')]",
+                "type": "Microsoft.DataFactory/factories/linkedServices",
+                "apiVersion": "2018-06-01",
+                "properties": {
+                    "annotations": [],
+                    "type": "AzureBlobStorage",
+                    "typeProperties": {
+                        "serviceEndpoint": "[concat('https://',variables('storageAccName'), '.blob.core.windows.net')]",
+
+                        "servicePrincipalId": "[parameters('wpaReaderAppId')]",
+                        "tenantId": "bd382938-3ba0-469f-8b45-fa06740d181f",
+                        "servicePrincipalKey": {
+                            "type": "AzureKeyVaultSecret",
+                            "store": {
+                                "referenceName": "AzureKeyVaultLS",
+                                "type": "LinkedServiceReference"
+                            },
+                            "secretName": "[parameters('wpaReaderAppSecretName')]",
+                            "secretVersion": ""
+                        }
+                    }
+                },
+                "dependsOn": [
+                    "[variables('factoryId')]",
+                    "[concat(variables('factoryId'), '/linkedServices/AzureKeyVaultLS')]"
+                ]
+            }
+            ]
+
+        },
+
+
+
+        {
+            "type": "Microsoft.KeyVault/vaults/accessPolicies",
+            "name": "[concat(parameters('wpaKeyVaultName'), '/add')]",
+
+            "apiVersion": "2019-09-01",
+            "dependsOn": [ "[variables('factoryName')]"
+            ],
+            "properties": {
+              "accessPolicies": [
+                {
+                    "objectId": "[reference(resourceId('Microsoft.DataFactory/factories/', variables('factoryName')),'2018-06-01', 'Full').identity.principalId]",
+                    "tenantId": "[subscription().tenantId]",
+                    "permissions": {
+                        "keys": [
+                            "Get",
+                            "List",
+                            "Update",
+                            "Create",
+                            "Import",
+                            "Delete",
+                            "Recover",
+                            "Backup",
+                            "Restore"
+                        ],
+                        "secrets": [
+                            "Get",
+                            "List"
+
+                        ],
+                        "certificates": [
+                            "Get",
+                            "List"
+
+                        ]
+                    }
+                }
+              ]
+            }
+          },
         {
             "type": "Microsoft.KeyVault/vaults",
             "name": "[parameters('wpaKeyVaultName')]",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2016-01-01",
+            "apiVersion": "2018-02-14",
             "properties": {
                 "sku": {
                     "family": "A",
@@ -109,17 +374,36 @@
                 },
                 "tenantId": "[subscription().tenantId]",
                 "accessPolicies": [
-                    {
-                        "tenantId": "[subscription().tenantId]",
-                        "objectId": "[resourceId('Microsoft.DataFactory/factories/', variables('dataFactoryName'))]",
-
-                        "permissions": {
-                            "keys": [ "get" ],
-                            "secrets": [ "get" ]
+                        {
+                            "objectId": "[parameters('appServicePrincipalId')]",
+                            "tenantId": "[subscription().tenantId]",
+                            "permissions": {
+                                "keys": [
+                                    "Get"
+                                ],
+                                "secrets": [
+                                    "Get"
+                                ],
+                                "certificates": []
+                            },
+                            "applicationId": null
                         }
-                    }
-                ]
-            }
+
+                    ]
+                }
+
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name":"[concat(parameters('wpaKeyVaultName'),'/', parameters('wpaReaderAppSecretName'))]",
+            "apiVersion": "2015-06-01",
+            "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('wpaReaderAppSecretValue')]"
+            },
+            "dependsOn": [
+                "[parameters('wpaKeyVaultName')]"
+            ]
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -140,31 +424,29 @@
                     ]
                 }
             ]
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[parameters('wpaReaderAppSecretName')]",
-            "apiVersion": "2015-06-01",
-            "properties": {
-                "contentType": "text/plain",
-                "value": "[variables('wpaReaderAppSecretValue')]"
-            },
-            "dependsOn": [
-                "[parameters('wpaKeyVaultName')]"
-            ]
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "LoremVault/ConnectionString",
-            "apiVersion": "2015-06-01",
-            "properties": {
-                "contentType": "text/plain",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=loremipsumstore;AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', 'loremipsumstore'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';')]"
-            },
-            "dependsOn": [
-                "[parameters('wpaKeyVaultName')]",
-                "[variables('storageAccName')]"
-            ]
         }
-    ]
+    ],
+
+    "outputs": {
+        "ResourceGroupName": {
+          "type": "string",
+          "value": "[resourceGroup().name]"
+        },
+        "storageResourceId":{
+            "type": "string",
+            "value": "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccName'))]"
+        },
+        "storageAccountName": {
+          "type": "string",
+          "value": "[variables('storageAccName')]"
+        },
+        "storageAccountLocation": {
+          "type": "string",
+          "value": "[resourceGroup().location]"
+        },
+        "storageAccountType": {
+          "type": "string",
+          "value": "[parameters('wpaAppStorageAccType')]"
+        }
+      }
 }

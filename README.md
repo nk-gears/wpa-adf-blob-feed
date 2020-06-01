@@ -30,7 +30,7 @@ This document explains on how to Setup the Azure Data Factory and Access Data fr
      - `Install-Module -Name Az -AllowClobber -Scope CurrentUser`
 2. Login to your Azure Subscription
    - If you don't have an Azure account, sign up for free here: https://azure.microsoft.com/en-us/free/
-   - And then from PowerShell run: `Connect-AzureAzAccount`
+   - And then from PowerShell run: `Connect-AzAccount`
    - If you you have multiple subcriptions, you will need to select the one you want to use:
      - `Select-AzureAzSubscription`
 
@@ -72,6 +72,8 @@ copyToBlobStorageMode
 ```
 
 ### Deploy the template
+
+Please edit the variables before deploying
 
 Deploy the template using the PowerShell ISE (Hit F5) or with PowerShell: `.\adf-wpa-feed-deploy.ps1`
 
