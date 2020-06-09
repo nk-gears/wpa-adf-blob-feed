@@ -16,7 +16,7 @@ $templateBaseParamPath = "./template-params.json"
 #===============================================================
 
 $json = Get-Content $templateBaseParamPath | Out-String | ConvertFrom-Json
-$parameters = $json.parameters
+$tplParameters = $json.parameters
 
 
 Connect-AzureAD
@@ -43,7 +43,7 @@ If ($ad_app -eq $null) {
 }
 
     $ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
-	$appSecretIdentifier=$parameters.wpaAppStorageAccType.value
+	$appSecretIdentifier=$parameters.wpaReaderAppSecretName.value
 	# Create a Client Secret If not exists
 	$app_secretInfo=Get-AzureADApplicationPasswordCredential -ObjectId $ad_app.ObjectId
 	#If ($secret_exists -eq $null) {}
@@ -63,19 +63,15 @@ If ($ad_app -eq $null) {
 	$appServicePrincipalId=$ad_App_sp.ObjectId
 
 	# Prepare the necessary parameters for the template
-	$parameters = @{
-		wpaReaderAppId=$ad_app.AppId
-		wpaKeyVaultName=$parameters.wpaKeyVaultName.value
-		appServicePrincipalId= $appServicePrincipalId
-		wpaReaderAppSecretName= $appSecretIdentifier
-		wpaReaderAppSecretValue= $dataReaderAppClientSecret
-		wpaAppStorageAccType=$parameters.wpaAppStorageAccType.value
-		wpaAppStorageAccNamePrefix=$parameters.wpaAppStorageAccNamePrefix.value
-		wpaAppDataFactoryName =$parameters.wpaAppDataFactoryName.value
-		wpaSourceODataFeedUrl =$parameters.wpaSourceODataFeedUrl.value
-		wpaSourceODataFeedQuery =$parameters.wpaSourceODataFeedQuery.value
-		copyToBlobStorageMode =$parameters.copyToBlobStorageMode.value
+	$parameters = @{}
+	foreach ( $Property in $tplParameters.psobject.Properties){
+		#$arguments += @{$Property.Name = $Property.value}
+		$parameters[$Property.Name]=$Property.value.value
 	}
+
+	$parameters["wpaReaderAppId"]=$ad_app.AppId
+	$parameters["appServicePrincipalId"]= $appServicePrincipalId
+	$parameters["wpaReaderAppSecretValue"]= $dataReaderAppClientSecret
 
 
    echo "Preparing for ARM Template Deployment"
