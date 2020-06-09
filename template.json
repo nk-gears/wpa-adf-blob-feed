@@ -8,7 +8,7 @@
             "minLength": 3,
             "maxLength": 11,
             "metadata": {
-                "description": "data factory location"
+                "description": "Data factory location"
             }
         },
 
@@ -18,7 +18,7 @@
             "minLength": 3,
             "maxLength": 25,
             "metadata": {
-                "description": "data factory name"
+                "description": "Data factory name"
             }
         },
         "copyToBlobStorageMode": {
@@ -32,7 +32,7 @@
         },
         "wpaSourceODataFeedQuery": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "$select=Name,Description&$top=5",
             "metadata": {
                 "description": "odata uery"
             }
@@ -45,11 +45,20 @@
                 "description": "Azure AD APP Id"
             }
         },
+         "wpaEntityName": {
+            "type": "string",
+            "defaultValue": "Persons",
+            "metadata": {
+                "description": "The entity which you need to pull data for"
+            }
+        },
+
+
         "wpaSourceODataFeedUrl": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "https://workplaceanalytics.office.com/10c5ca3c-a4d2-424d-8af3-f0efd6c79c99/scopes/217c5147-e12b-448c-9672-25b79a9ec0f0/jobsodata/40254f7d-3957-4001-bcf7-aeb8d109be36/Person",
             "metadata": {
-                "description": "endpoint url"
+                "description": "WPA OData API Feed url"
             }
         },
 
@@ -61,14 +70,14 @@
         },
         "wpaReaderAppSecretName": {
             "type": "string",
-            "defaultValue": "Sample",
+            "defaultValue": "DataReaderClientSecret",
             "metadata": {
                 "description": "Specifies the secret name to be used in the vault for the OData reader app"
             }
         },
         "wpaReaderAppSecretValue": {
             "type": "string",
-            "defaultValue": "Sample",
+            "defaultValue": "",
             "metadata": {
                 "description": "Specifies the secret value to be used in the vault for the OData reader app"
             }
@@ -150,7 +159,8 @@
                             "typeProperties": {
                                 "source": {
                                     "type": "ODataSource",
-                                    "httpRequestTimeout": "00:05:00"
+                                    "httpRequestTimeout": "00:05:00",
+                                    "query": "[parameters('wpaSourceODataFeedQuery')]"
                                 },
                                 "sink": {
                                     "type": "DelimitedTextSink",
@@ -212,7 +222,7 @@
                                 "referenceName": "AzureKeyVaultLS",
                                 "type": "LinkedServiceReference"
                             },
-                            "secretName": "DataReaderClientSecret"
+                            "secretName": "[parameters('wpaReaderAppSecretName')]"
                         }
                     }
                 },
@@ -250,7 +260,7 @@
                     "type": "ODataResource",
                     "schema": [],
                     "typeProperties": {
-                        "path": "Persons"
+                        "path": "[parameters('wpaEntityName')]"
                     }
                 },
                 "dependsOn": [

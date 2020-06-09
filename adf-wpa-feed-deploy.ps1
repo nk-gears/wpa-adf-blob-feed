@@ -14,6 +14,11 @@ $resourceGroupLocation = "eastus"
 $templatePath = "./template.json"
 $templateBaseParamPath = "./template-params.json"
 #===============================================================
+
+$json = Get-Content $templateBaseParamPath | Out-String | ConvertFrom-Json
+$parameters = $json.parameters
+
+
 Connect-AzureAD
 
 echo "Running Pre-liminary Scripts "
@@ -38,7 +43,7 @@ If ($ad_app -eq $null) {
 }
 
     $ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
-	$appSecretIdentifier="DataReaderClientSecret"
+	$appSecretIdentifier=$parameters.wpaAppStorageAccType.value
 	# Create a Client Secret If not exists
 	$app_secretInfo=Get-AzureADApplicationPasswordCredential -ObjectId $ad_app.ObjectId
 	#If ($secret_exists -eq $null) {}
@@ -53,8 +58,6 @@ If ($ad_app -eq $null) {
 	#Stoe the Secret temporarily so that we can pass it to KeyVault creation
 	$dataReaderAppClientSecret=$appClientSecret.Value
 
-	$json = Get-Content $templateBaseParamPath | Out-String | ConvertFrom-Json
-	$parameters = $json.parameters
 
 	$ad_App_sp = Get-AzureADServicePrincipal -Filter "displayName eq '$reader_app_name'"
 	$appServicePrincipalId=$ad_App_sp.ObjectId
