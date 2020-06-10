@@ -77,6 +77,17 @@ Please edit the variables before deploying
 
 Deploy the template using the PowerShell ISE (Hit F5) or with PowerShell: `.\adf-wpa-feed-deploy.ps1`
 
+### Destroy the resources
 
+`.\adf-wpa-destroy.ps1`
 
+### Note
 
+```
+The  current OData Service seems to work like a fixed dataset. Even if i query for meetings it returns Person data always. Moreover the "dynamic query" works if i use other external oData services but our WPA Odata seems to not supporting it.
+
+Example :
+This is a example odata public service, I can use $select. $top etc.
+https://services.odata.org/v4/(S(34wtn2c0hkuk5ekg0pjr513b))/TripPinServiceRW/People?$top=1
+
+```

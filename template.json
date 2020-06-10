@@ -159,8 +159,8 @@
                             "typeProperties": {
                                 "source": {
                                     "type": "ODataSource",
-                                    "httpRequestTimeout": "00:05:00",
-                                    "query": "[parameters('wpaSourceODataFeedQuery')]"
+                                    "httpRequestTimeout": "00:05:00"
+
                                 },
                                 "sink": {
                                     "type": "DelimitedTextSink",
@@ -405,9 +405,7 @@
                     "firstRowAsHeader": true,
                     "quoteChar": "\""
                 },
-                "schema": [
-
-                ]
+                "schema": []
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLS')]"

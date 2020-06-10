@@ -1,12 +1,9 @@
 Write-Host "Setting up Workplace Analytics Reader App..."
 
-#Get-AzureRmSubscription –SubscriptionName $subscriptionName | Select-AzureRmSubscription
-
-
-$reader_app_name = "NK WPA Data Reader App final"
+$reader_app_name = "NK-wpa-jun10"
 $reader_app_role_name = "Analyst"
 $wpa_app_name = "Workplace Analytics"
-$resourceGroupName = "nkwpa-adf-setup-rg-final"
+$resourceGroupName = "nkwpa-jun10"
 $resourceGroupLocation = "eastus"
 
 
