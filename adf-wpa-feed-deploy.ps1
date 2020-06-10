@@ -40,7 +40,7 @@ If ($ad_app -eq $null) {
 }
 
     $ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
-	$appSecretIdentifier=$parameters.wpaReaderAppSecretName.value
+	$appSecretIdentifier=$tplParameters.wpaReaderAppSecretName.value
 	# Create a Client Secret If not exists
 	$app_secretInfo=Get-AzureADApplicationPasswordCredential -ObjectId $ad_app.ObjectId
 	#If ($secret_exists -eq $null) {}
