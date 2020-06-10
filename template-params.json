@@ -3,6 +3,10 @@
     "contentVersion":"1.0.0.0",
     "parameters":{
 
+
+        "wpaReaderAppSecretName":{
+            "value":"DataReaderClientSecret"
+        },
         "wpaEntityName":{
             "value":"Persons"
         },
