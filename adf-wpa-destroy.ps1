@@ -1,5 +1,5 @@
-$reader_app_name = "NK WPA Data Reader App final"
-$resourceGroupName = "nkwpa-adf-setup-rg1"
+$reader_app_name = "NKJUn21"
+$resourceGroupName = "NKJUn21"
 
 Connect-AzureAD
 $ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
