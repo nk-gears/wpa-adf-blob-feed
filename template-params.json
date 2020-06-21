@@ -6,7 +6,7 @@
             "value":"DataReaderClientSecret2"
         },
         "skipVaultCreation":{
-            "value":"Yes"
+            "value":"No"
         },
         "wpaKeyVaultName":{
             "value":"RGSVaultW"

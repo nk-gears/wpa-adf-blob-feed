@@ -129,11 +129,14 @@ $dataReaderAppClientSecret=$appClientSecret.Value
 
 
 #----------PREPARE TEMPLATE Parameters--------------------------------------------------------------
-$createVault="No"
+$createVaultSkip="No"
 $vault=Get-AzKeyVault -ResourceGroupName $resourceGroupName -VaultName $tplParameters.wpaKeyVaultName.value
-If(!$vault){
-	$createVault="Yes"
+If($vault){
+	$createVaultSkip="Yes"
 }
+
+echo "Skip Vault Creation $createVaultSkip"
+
 
 $ad_App_sp = Get-AzureADServicePrincipal -Filter "displayName eq '$reader_app_name'"
 $appServicePrincipalId=$ad_App_sp.ObjectId
@@ -146,7 +149,7 @@ $appServicePrincipalId=$ad_App_sp.ObjectId
 	}
 
 	$parameters["wpaReaderAppId"]=$ad_app.AppId
-	$parameters["skipVaultCreation"]=$createVault
+	$parameters["skipVaultCreation"]=$createVaultSkip
 	$parameters["appServicePrincipalId"]= $appServicePrincipalId
 	$parameters["wpaReaderAppSecretValue"]= $dataReaderAppClientSecret
 
