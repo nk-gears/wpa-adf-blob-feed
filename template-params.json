@@ -9,7 +9,7 @@
             "value":"Yes"
         },
         "wpaKeyVaultName":{
-            "value":"RGSVault"
+            "value":"RGSVaultW"
         },
         "wpaAppStorageAccType":{
             "value":"Standard_LRS"
@@ -19,7 +19,7 @@
         },
 
         "wpaAppDataFactoryName":{
-            "value":"NKADFfinal09JUN"
+            "value":"NKADF21JUN"
         },
 
         "wpaADFJobName":{

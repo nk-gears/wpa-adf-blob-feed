@@ -155,3 +155,25 @@ echo "Deployment Completed."
               ]
             }
           },
+
+
+
+          {
+
+            ,
+
+                "resources": [
+                    {
+                        "condition": "[not(equals(parameters('skipVaultCreation'), 'Yes'))]",
+                        "type": "secrets",
+                        "name": "[parameters('wpaReaderAppSecretName')]",
+                        "apiVersion": "2018-02-14",
+                        "properties": {
+                            "value": "[parameters('wpaReaderAppSecretValue')]"
+                        },
+                        "dependsOn": [
+                            "[resourceId('Microsoft.KeyVault/vaults/', parameters('wpaKeyVaultName'))]"
+                        ]
+                    }
+                ]
+        }

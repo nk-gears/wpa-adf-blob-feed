@@ -118,7 +118,7 @@
         }
     },
     "variables": {
-        "targetFolderPath":"@concat(formatDateTime(adddays(utcnow(),-1),'yyyy'))",
+        "targetFolderPath":"@concat(formatDateTime(adddays(utcnow(),-1),'yyyy'),'/',)",
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
         "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
         "storageAccName": "[concat(parameters('wpaAppStorageAccNamePrefix'), uniqueString(resourceGroup().id))]",
@@ -302,12 +302,15 @@
 
         },
         {
-            "condition": "[equals(parameters('skipVaultCreation'), 'Yes')]",
+            "condition": "[not(equals(parameters('skipVaultCreation'), 'Yes'))]",
             "type": "Microsoft.KeyVault/vaults",
             "name": "[parameters('wpaKeyVaultName')]",
             "location": "[resourceGroup().location]",
             "apiVersion": "2018-02-14",
+
             "properties": {
+                "enabledForDeployment": true,
+                "enabledForTemplateDeployment": true,
                 "sku": {
                     "family": "A",
                     "name": "standard"
@@ -330,24 +333,30 @@
                         }
 
                     ]
-                },
-
-                "resources": [
-                    {
-                        "condition": "[equals(parameters('skipVaultCreation'), 'Yes')]",
-                        "type": "secrets",
-                        "name": "[parameters('wpaReaderAppSecretName')]",
-                        "apiVersion": "2018-02-14",
-                        "properties": {
-                            "value": "[parameters('wpaReaderAppSecretValue')]"
-                        },
-                        "dependsOn": [
-                            "[resourceId('Microsoft.KeyVault/vaults/', parameters('wpaKeyVaultName'))]"
-                        ]
-                    }
-                ]
+                }
 
         },
+
+        {
+            "condition": "[not(equals(parameters('skipVaultCreation'), 'Yes'))]",
+            "comments": "Key Vault Secret",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(parameters('wpaKeyVaultName'), '/', parameters('wpaReaderAppSecretName'))]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "attributes": {
+                    "enabled": true
+                },
+                "value": "[parameters('wpaReaderAppSecretValue')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('wpaKeyVaultName'))]"
+            ]
+        },
+
+
         {
             "name": "[concat(variables('factoryName'), '/',variables('targetDSName'))]",
             "type": "Microsoft.DataFactory/factories/datasets",
@@ -364,7 +373,7 @@
                         "type": "AzureBlobStorageLocation",
                         "container": "wpaexports",
                         "folderPath": {
-                            "value": "[concat(variables('targetFolderPath'),'/',parameters('wpaADFJobName'))]",
+                            "value": "[concat(variables('targetFolderPath'),parameters('wpaADFJobName'),')')]",
                             "type": "Expression"
                         }
                     },
