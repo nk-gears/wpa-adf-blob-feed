@@ -1,12 +1,6 @@
-
 # Setup Azure Data Factory to Extract OData Feed from Workplace Analytics to Blob Storage
 
-
-
-
 [![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnk-gears%2Fwpa-adf-blob-feed%2Fmaster%2Ftemplate.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https://raw.githubusercontent.com/nk-gears/wpa-adf-blob-feed/master/template.json)
-
 
 
 This document explains on how to Setup the Azure Data Factory and Access Data from Workplace Analytics Enterprise App and Copy them to a Blob Storage using  Azure Resource Manager Template with Powershell Script.
@@ -40,27 +34,44 @@ The following sections explains how this will be achieved.
 ### Configuration Variables
 
 ```
-# Common Variables inside Powershell
-$resourceGroupName = "<rg name>"
-$resourceGroupRegion = "<rg location>"
-$templatePath = "<path>"
+# Powershell Input Prompts
+- Subscription Id   : Use this for WPA : bc85080a-0c4a-41ba-8b88-add5d6714c4b
+- Resource Group Name
+- AD App Registration Name
+
+### Deafult Values
+- Resource Group Location defauled to eastus. Please update Powershell if you want to change
 
 ```
 
 ### Template Parameters
 
-```
+App Specific
+- wpaReaderAppSecretName
 
-wpaAppStorageAccType
-wpaAppStorageAccNamePrefix
-wpaAppDataFactoryName
-wpaSourceODataFeedUrl
-wpaSourceODataFeedQuery
-copyToBlobStorageMode
+Vault Specific
+- wpaKeyVaultName
+- skipVaultCreation (to resuse existing in the same RG)
+
+Storage & ADF Specific
+- wpaAppStorageAccType
+- wpaAppStorageAccNamePrefix
+- wpaAppDataFactoryName
+- wpaADFJobName   e.g PersonEmailStats
+- wpaEntityName   e.g : Persons or Meetings
+- wpaSourceODataFeedUrl
+
+**FAQs**
+
+> 1. **Can't we Just use the ARM Template (DeployTemplate via UI) Option to run the entrire steps.?. Do we really need the Powershell ?**
+
+- *Currently, Microsoft doesn't provide an Option to Register a Active Directory Application. The Powershell is used only for the ActiveDirectory Creation with Service Principal and to Create Secrets Automatically.*
+- *So, Without Powershell we can't setup this*. We can skip the Powershell for the Subsequent Incremental Deployments. But for the Initial Setup, they MUST use the Powershell to bootstrap the environment
 
 
+>2. Is it Possible to deploy the Multiple ADF's or Multiple Pipeline Under the same ADF and Resource Group ?
 
-```
+- *We have added a new Parameter called "wpaADFJobName". This can be used to control this behaviour*
 
 
 ## Folder Structure
@@ -68,6 +79,8 @@ copyToBlobStorageMode
 -- template.json
 -- template-params.json
 -- adf-wpa-feed-deploy.ps1
+-- adf-wpa-destroy.ps1
+-- show-parameters.ps1
 
 ```
 
@@ -84,10 +97,11 @@ Deploy the template using the PowerShell ISE (Hit F5) or with PowerShell: `.\adf
 ### Note
 
 ```
-The  current OData Service seems to work like a fixed dataset. Even if i query for meetings it returns Person data always. Moreover the "dynamic query" works if i use other external oData services but our WPA Odata seems to not supporting it.
+The  current OData WPA Service seems to work like a limited dataset. No dynamic query supported at this time. This is confirmed by thr WPA DEv Team.
 
 Example :
 This is a example odata public service, I can use $select. $top etc.
 https://services.odata.org/v4/(S(34wtn2c0hkuk5ekg0pjr513b))/TripPinServiceRW/People?$top=1
 
 ```
+

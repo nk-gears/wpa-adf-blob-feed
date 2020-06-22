@@ -22,8 +22,9 @@
 
 param(
 
+ [Parameter(Mandatory=$True)]
  [string]
- $subscriptionId = "bc85080a-0c4a-41ba-8b88-add5d6714c4b",
+ $subscriptionId,
 
  [Parameter(Mandatory=$True)]
  [string]
