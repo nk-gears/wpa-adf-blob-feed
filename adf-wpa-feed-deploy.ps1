@@ -64,11 +64,12 @@ $tplParameters = $json.parameters
 
 echo "Running Pre-liminary Scripts "
 
-Connect-AzureAD
+#Connect-AzureAD
 
 # Create a Azure App by Registering One. Skip If Exists
 $ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
 
+echo "Checking App Registration..."
 
 If ($ad_app -eq $null) {
 
@@ -158,7 +159,7 @@ $appServicePrincipalId=$ad_App_sp.ObjectId
 
    echo "Deploying ARM Resources..."
    echo $parameters
-   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters -debug
+   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters
    echo  $ARMOutput
 
 

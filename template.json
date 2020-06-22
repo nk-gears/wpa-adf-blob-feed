@@ -118,11 +118,11 @@
         }
     },
     "variables": {
-        "targetFolderPath":"@concat(formatDateTime(adddays(utcnow(),-1),'yyyy'),'/',)",
+        "targetFolderPath":"@concat(formatDateTime(adddays(utcnow(),-1),'yyyy'),'/',",
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
         "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
         "storageAccName": "[concat(parameters('wpaAppStorageAccNamePrefix'), uniqueString(resourceGroup().id))]",
-        "contributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+        "contributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
         "sourceDSName":  "[concat('WPAODataDS','_',parameters('wpaADFJobName'))]",
         "targetDSName":  "[concat('DelimitedTextDS','_',parameters('wpaADFJobName'))]",
         "sourceLS":"[concat('WPAODataLS','_',parameters('wpaADFJobName'))]"
@@ -373,7 +373,7 @@
                         "type": "AzureBlobStorageLocation",
                         "container": "wpaexports",
                         "folderPath": {
-                            "value": "[concat(variables('targetFolderPath'),parameters('wpaADFJobName'),')')]",
+                            "value": "[concat(variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
                             "type": "Expression"
                         }
                     },

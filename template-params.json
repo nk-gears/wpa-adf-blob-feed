@@ -3,13 +3,13 @@
     "contentVersion":"1.0.0.0",
     "parameters":{
         "wpaReaderAppSecretName":{
-            "value":"DataReaderClientSecret2"
+            "value":"DataReaderClientSecret"
         },
         "skipVaultCreation":{
             "value":"No"
         },
         "wpaKeyVaultName":{
-            "value":"RGSVaultW"
+            "value":"RGSVaultY"
         },
         "wpaAppStorageAccType":{
             "value":"Standard_LRS"
