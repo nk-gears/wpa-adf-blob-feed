@@ -1,6 +1,14 @@
 
 # Change Log
 
+
+## 2020.6.22
+- Added Incremental Support to deploy Multiple ADF or PipelineJobs
+- Added Dynamic Grouping of Data based on JobName. wpaexports/2020/mettinginfo/2342342342.csv
+- Refactored the Powershell with user friendly Prompts. No need to edit the powershell files
+- Created a New script show-parameters.ps1 to get the AppId and Service Principal Id. This way they don't need to search for the AppId and Service PrincipalId for subsequent deployments.
+
+
 ## 2020.6.10
 
 ### Dynamic Schema
