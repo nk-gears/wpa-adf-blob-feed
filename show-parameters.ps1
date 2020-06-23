@@ -32,7 +32,9 @@ $reader_app_name = $ADAppRegistrationName
 
 $ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
 
-echo "App Id : $ad_app.AppId "
+Write-Host "App Id : "
+Write-Host $ad_app.AppId
 $reader_sp = Get-AzureADServicePrincipal -Filter "displayName eq '$reader_app_name'"
 
-echo "Service Principal Id : $reader_sp.ObjectId"
+Write-Host "Service Principal Id : "
+Write-Host $reader_sp.ObjectId
