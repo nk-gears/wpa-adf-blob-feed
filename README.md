@@ -1,6 +1,6 @@
 # Setup Azure Data Factory to Extract OData Feed from Workplace Analytics to Blob Storage
 
-[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnk-gears%2Fwpa-adf-blob-feed%2Fmaster%2Ftemplate.json)
+[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnk-gears%2Fwpa-adf-blob-feed%2Fmaster%2Fscripts%2Ftemplate.json)
 
 
 This document explains on how to Setup the Azure Data Factory and Access Data from Workplace Analytics Enterprise App and Copy them to a Blob Storage using  Azure Resource Manager Template with Powershell Script.
