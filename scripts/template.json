@@ -37,9 +37,14 @@
             }
         },
 
+
         "skipVaultCreation":{
             "type": "string",
             "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
             "metadata": {
                 "description": "Specifies whether we need to Skip Vault Creation"
             }
@@ -90,7 +95,7 @@
         },
         "wpaAppStorageAccName": {
             "type": "string",
-            "defaultValue":  "[concat('wpaExportStorage_', uniqueString(resourceGroup().id))]",
+            "defaultValue":  "wpastorage_<resourceGroup_id>",
             "minLength": 3,
             "maxLength": 25,
             "metadata": {
@@ -112,6 +117,18 @@
             }
         },
 
+        "skipStorageCreation":{
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Specifies whether we need to Skip Storage Creation and use the existing"
+            }
+        },
+
         "wpaStorageContainerName": {
             "type": "string",
             "defaultValue":"wpaexports",
@@ -122,7 +139,7 @@
 
         "storageTargetBlobFolderPath": {
             "type": "string",
-            "defaultValue":"[concat(parameters('wpaStorageContainerName'), '/csv/')]",
+            "defaultValue":"<StorageContainerName>/some-folder/",
             "metadata": {
                 "description": "Specifies the path to the blob folder. Including the container Name"
             }
@@ -135,7 +152,7 @@
         "targetFolderPath":"@concat(formatDateTime(adddays(utcnow(),-1),'yyyy'),'/',",
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
         "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
-        "storageAccName": "[parameters('wpaAppStorageAccNamePrefix')]",
+        "storageAccName": "[parameters('wpaAppStorageAccName')]",
         "contributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
         "sourceDSName":  "[concat('WPAODataDS','_',parameters('wpaADFJobName'))]",
         "targetDSName":  "[concat('DelimitedTextDS','_',parameters('wpaADFJobName'))]",
@@ -385,9 +402,9 @@
                 "typeProperties": {
                     "location": {
                         "type": "AzureBlobStorageLocation",
-                        "container": "wpaexports",
+                        "container": "[parameters('wpaStorageContainerName')]",
                         "folderPath": {
-                            "value": "[concat(variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
+                            "value": "[concat(parameters('storageTargetBlobFolderPath'),'/' variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
                             "type": "Expression"
                         }
                     },
@@ -403,6 +420,7 @@
             ]
         },
         {
+            "condition": "[not(equals(parameters('skipStorageCreation'), 'Yes'))]",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageAccName')]",
             "apiVersion": "2016-01-01",
