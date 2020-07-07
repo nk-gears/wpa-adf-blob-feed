@@ -65,7 +65,7 @@
             "type": "string",
             "defaultValue": "Persons",
             "metadata": {
-                "description": "The entity which you need to pull data for"
+                "description": "The Azure Data Factory to be Created"
             }
         },
         "wpaEntityName": {
