@@ -74,20 +74,8 @@ echo "Checking App Registration..."
 
 If ($ad_app -eq $null) {
 
-	$app = New-AzureADApplication -DisplayName $reader_app_name -ReplyUrls https://nourl
-	$appSp = New-AzureADServicePrincipal -appid $app.AppId
-	echo "App Registraton done for $reader_app_name"
-
-	echo $appSp;
-
-	$sp = Get-AzureADServicePrincipal -Filter "displayName eq '$wpa_app_name'"
-	$sp.AppRoles | Where-Object { $_.DisplayName -eq 'User.Read'}
-
-	#Assign AppRole
-	$reader_appRole = $sp.AppRoles | Where-Object { $_.DisplayName -eq $reader_app_role_name }
-	$reader_sp = Get-AzureADServicePrincipal -Filter "displayName eq '$reader_app_name'"
-	New-AzureADServiceAppRoleAssignment -ObjectId $reader_sp.ObjectId -PrincipalId $reader_sp.ObjectId -ResourceId $sp.ObjectId -Id $reader_appRole.Id
-
+	echo "App not found. Please use the register-app-for-wpa script before running this."
+	Break
 }
 
 	$ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"

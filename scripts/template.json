@@ -66,11 +66,20 @@
 
         "wpaStorageContainerName": {
             "type": "string",
-            "defaultValue": "wpaexports",
+            "defaultValue":"wpaexports",
             "metadata": {
                 "description": "Specifies the name of the blob container to which the wpa feed to be exported."
             }
         },
+
+        "storageTargetBlobFolderPath": {
+            "type": "string",
+            "defaultValue":"[concat(parameters('wpaStorageContainerName'), '/csv/')]",
+            "metadata": {
+                "description": "Specifies the path to the blob folder. Including the container Name"
+            }
+        },
+
         "wpaAppStorageAccType": {
             "type": "string",
             "defaultValue": "Standard_LRS",
@@ -84,9 +93,9 @@
                 "description": "Storage Account type"
             }
         },
-        "wpaAppStorageAccNamePrefix": {
+        "wpaAppStorageAccName": {
             "type": "string",
-            "defaultValue": "storage",
+            "defaultValue":  "[concat('wpaExportStorage_', uniqueString(resourceGroup().id))]",
             "minLength": 3,
             "maxLength": 25,
             "metadata": {
@@ -121,7 +130,7 @@
         "targetFolderPath":"@concat(formatDateTime(adddays(utcnow(),-1),'yyyy'),'/',",
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
         "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
-        "storageAccName": "[concat(parameters('wpaAppStorageAccNamePrefix'), uniqueString(resourceGroup().id))]",
+        "storageAccName": "[parameters('wpaAppStorageAccNamePrefix')]",
         "contributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
         "sourceDSName":  "[concat('WPAODataDS','_',parameters('wpaADFJobName'))]",
         "targetDSName":  "[concat('DelimitedTextDS','_',parameters('wpaADFJobName'))]",
