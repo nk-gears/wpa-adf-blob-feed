@@ -405,7 +405,7 @@
                         "type": "AzureBlobStorageLocation",
                         "container": "[parameters('wpaStorageContainerName')]",
                         "folderPath": {
-                            "value": "[concat(parameters('storageTargetBlobFolderPath'),'/' variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
+                            "value": "[concat(parameters('storageTargetBlobFolderPath'),'/', variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
                             "type": "Expression"
                         }
                     },
