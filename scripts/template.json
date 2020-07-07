@@ -139,9 +139,9 @@
 
         "storageTargetBlobFolderPath": {
             "type": "string",
-            "defaultValue":"<StorageContainerName>/some-folder/",
+            "defaultValue":"some-folder/",
             "metadata": {
-                "description": "Specifies the path to the blob folder. Including the container Name"
+                "description": "Specifies the path to the blob folder. Without the container Name"
             }
         }
 
