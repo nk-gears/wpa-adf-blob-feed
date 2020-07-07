@@ -38,17 +38,7 @@
         },
 
 
-        "skipVaultCreation":{
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "metadata": {
-                "description": "Specifies whether we need to Skip Vault Creation"
-            }
-        },
+
 
         "dataFactoryLocation": {
             "type": "string",
@@ -117,17 +107,6 @@
             }
         },
 
-        "skipStorageCreation":{
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "metadata": {
-                "description": "Specifies whether we need to Skip Storage Creation and use the existing"
-            }
-        },
 
         "wpaStorageContainerName": {
             "type": "string",
@@ -143,8 +122,30 @@
             "metadata": {
                 "description": "Specifies the path to the blob folder. Without the container Name"
             }
-        }
+        },
 
+        "skipStorageCreation":{
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Specifies whether we need to Skip Storage Creation and use the existing"
+            }
+        },
+        "skipVaultCreation":{
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Specifies whether we need to Skip Vault Creation"
+            }
+        }
 
 
     },
