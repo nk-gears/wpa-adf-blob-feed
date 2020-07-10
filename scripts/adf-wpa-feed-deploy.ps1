@@ -58,7 +58,7 @@ if ([string]::IsNullOrWhiteSpace($ADAppRegistrationName)){
 Write-Host "Selecting subscription '$subscriptionId'";
 Select-AzSubscription -SubscriptionID $subscriptionId;
 
-Write-Host "Setting up Workplace Analytics Reader App..."
+Write-Host "Setting up Reader App..."
 #bc85080a-0c4a-41ba-8b88-add5d6714c4b
 
 # App Registration
@@ -174,7 +174,7 @@ $appServicePrincipalId=$ad_App_sp.ObjectId
 
    echo "Deploying ARM Resources..."
 
-   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters
+   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters -debug
    echo  $ARMOutput
 
 
