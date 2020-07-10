@@ -61,12 +61,13 @@ If ($ad_app -eq $null) {
 	New-AzureADServiceAppRoleAssignment -ObjectId $reader_sp.ObjectId -PrincipalId $reader_sp.ObjectId -ResourceId $sp.ObjectId -Id $reader_appRole.Id
 }
 
+	echo "Deployment is in Progress.."
+	Start-Sleep -s 20
 	$ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
     if(!$ad_app){
         echo "App Registration  Completed."
 
     }else{
-
         echo "Error registering app."
     }
 

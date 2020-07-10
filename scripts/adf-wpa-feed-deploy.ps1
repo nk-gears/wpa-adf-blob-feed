@@ -44,7 +44,15 @@ $templatePath = "./template.json"
 $templateBaseParamPath = "./template-params.json"
 #===============================================================
 
-
+if ([string]::IsNullOrWhiteSpace($subscriptionId)){
+   $subscriptionId="bc85080a-0c4a-41ba-8b88-add5d6714c4b"
+}
+if ([string]::IsNullOrWhiteSpace($resourceGroupName)){
+   $resourceGroupName="NKJUL22"
+}
+if ([string]::IsNullOrWhiteSpace($ADAppRegistrationName)){
+   $ADAppRegistrationName="NKJUL07"
+}
 
 # select subscription
 Write-Host "Selecting subscription '$subscriptionId'";
@@ -96,6 +104,7 @@ if(!$resourceGroup)
 }
 else{
     Write-Host "Using existing resource group '$resourceGroupName'";
+    Write-Host "Using App '$reader_app_name'";
 }
 
 #=====ADD SECRET TO APP===================================================
@@ -143,11 +152,28 @@ $appServicePrincipalId=$ad_App_sp.ObjectId
 	$parameters["appServicePrincipalId"]= $appServicePrincipalId
 	$parameters["wpaReaderAppSecretValue"]= $dataReaderAppClientSecret
 
-   echo "Preparing for ARM Template Deployment"
+   $skipStorageCreation=$tplParameters.skipStorageCreation.value.toLower()
+   if($skipStorageCreation -eq "yes"){
+
+      $storageAccountName=$tplParameters.wpaAppStorageAccName.value
+      $storageAcc=Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name  $storageAccountName
+
+      If($storageAcc -ne $null){
+      echo "Assigning Permissions for the App to write to Blob Storage"
+      $stg_role=Get-AzRoleAssignment -ObjectId $ad_App_sp.ObjectId -RoleDefinitionName "Storage Blob Data Contributor" -Scope $storageAcc.Id
+      If ($stg_role -eq $null) {
+
+      echo " Adding permissions for blob storage"
+      $role_for_storage=New-AzRoleAssignment -ObjectId $ad_App_sp.ObjectId -RoleDefinitionName "Storage Blob Data Contributor" -Scope $storageAcc.Id
+
+      }
+      }
+
+   }
 
 
    echo "Deploying ARM Resources..."
-   echo $parameters
+
    $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters
    echo  $ARMOutput
 

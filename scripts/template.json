@@ -85,11 +85,11 @@
         },
         "wpaAppStorageAccName": {
             "type": "string",
-            "defaultValue":  "wpastorage_<resourceGroup_id>",
+            "defaultValue":  "wpastorage<resourceGroup_id>",
             "minLength": 3,
             "maxLength": 25,
             "metadata": {
-                "description": "Prefix for the Storage Acc name to be combined with the unique string"
+                "description": "Prefix for the Storage Acc name cannot contain special characters"
             }
         },
 
@@ -334,7 +334,7 @@
 
         },
         {
-            "condition": "[not(equals(parameters('skipVaultCreation'), 'Yes'))]",
+            "condition": "[not(equals(toLower(parameters('skipVaultCreation')), 'yes'))]",
             "type": "Microsoft.KeyVault/vaults",
             "name": "[parameters('wpaKeyVaultName')]",
             "location": "[resourceGroup().location]",
@@ -370,7 +370,7 @@
         },
 
         {
-            "condition": "[not(equals(parameters('skipVaultCreation'), 'Yes'))]",
+            "condition": "[not(equals(toLower(parameters('skipVaultCreation')), 'yes'))]",
             "comments": "Key Vault Secret",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "name": "[concat(parameters('wpaKeyVaultName'), '/', parameters('wpaReaderAppSecretName'))]",
@@ -421,7 +421,7 @@
             ]
         },
         {
-            "condition": "[not(equals(parameters('skipStorageCreation'), 'Yes'))]",
+            "condition": "[not(equals(toLower(parameters('skipStorageCreation')), 'yes'))]",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageAccName')]",
             "apiVersion": "2016-01-01",
@@ -442,6 +442,7 @@
             ]
         },
         {
+            "condition": "[not(equals(toLower(parameters('skipStorageCreation')), 'yes'))]",
             "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
             "name": "[concat(variables('storageAccName'), '/Microsoft.Authorization/', guid(uniqueString(variables('storageAccName'))))]",

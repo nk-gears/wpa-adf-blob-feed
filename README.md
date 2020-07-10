@@ -39,7 +39,7 @@ The following sections explains how this will be achieved.
 - Resource Group Name
 - AD App Registration Name
 
-### Deafult Values
+### Default Values
 - Resource Group Location defauled to eastus. Please update Powershell if you want to change
 
 ```
