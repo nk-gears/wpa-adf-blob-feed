@@ -4,24 +4,24 @@
     "parameters":{
 
         "skipStorageCreation":{
-            "value":"Yes"
+            "value":"No"
         },
 
         "wpaReaderAppSecretName":{
-            "value":"DataReaderClientSecret12"
+            "value":"NKAppWpaSecret"
         },
         "skipVaultCreation":{
             "value":"No"
         },
 
         "wpaKeyVaultName":{
-            "value":"DataReaderClientSecret12"
+            "value":"NkSecretVault"
         },
         "wpaAppStorageAccType":{
             "value":"Standard_LRS"
         },
         "wpaAppStorageAccName":{
-            "value":"wpastoragenkju"
+            "value":"wpankjul"
         },
 
         "storageTargetBlobFolderPath":{
@@ -29,18 +29,18 @@
         },
 
         "wpaAppDataFactoryName":{
-            "value":"P2GADF"
+            "value":"P12GADF"
         },
 
         "wpaADFJobName":{
-            "value":"P2GPipeline"
+            "value":"P12GPipeline"
         },
 
         "wpaEntityName":{
             "value":"PersonToGroups"
         },
         "wpaSourceODataFeedUrl":{
-            "value":"https://workplaceanalytics.office.com/192c7589-e677-4069-9888-d22ef16b02e2/scopes/aee190df-40be-4df9-91b2-2c6e7addbd23/jobsodata/6eb305e69a5349678367fe418c4ab3d2/PersonToGroup"
+            "value":"https://workplaceanalytics.office.com/10c5ca3c-a4d2-424d-8af3-f0efd6c79c99/scopes/217c5147-e12b-448c-9672-25b79a9ec0f0/jobsodata/7485a812-d7c2-4709-b551-c414bdf2ecff/PersonToGroup"
  }
     }
 }

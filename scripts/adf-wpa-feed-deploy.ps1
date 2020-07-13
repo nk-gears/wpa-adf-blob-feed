@@ -112,7 +112,7 @@ $dataReaderAppClientSecret=""
 $appSecretIdentifier=$tplParameters.wpaReaderAppSecretName.value
 # Create a Client Secret If not exists
 $app_secretInfo=Get-AzureADApplicationPasswordCredential -ObjectId $ad_app.ObjectId
-If ($app_secretInfo -eq $null) {
+#If ($app_secretInfo -eq $null) {
 
 $startDate = Get-Date
 $endDate = $startDate.AddYears(3)
@@ -123,7 +123,7 @@ echo "Client Secret Created."
 #Store the Secret temporarily so that we can pass it to KeyVault creation
 $dataReaderAppClientSecret=$appClientSecret.Value
 
-}
+#}
 
 
 
@@ -153,6 +153,7 @@ $appServicePrincipalId=$ad_App_sp.ObjectId
 	$parameters["wpaReaderAppSecretValue"]= $dataReaderAppClientSecret
 
    $skipStorageCreation=$tplParameters.skipStorageCreation.value.toLower()
+
    if($skipStorageCreation -eq "yes"){
 
       $storageAccountName=$tplParameters.wpaAppStorageAccName.value
@@ -174,7 +175,7 @@ $appServicePrincipalId=$ad_App_sp.ObjectId
 
    echo "Deploying ARM Resources..."
 
-   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters -debug
+   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters #-debug
    echo  $ARMOutput
 
 

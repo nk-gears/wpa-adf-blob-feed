@@ -150,7 +150,8 @@
 
     },
     "variables": {
-        "targetFolderPath":"@concat(formatDateTime(adddays(utcnow(),-1),'yyyy'),'/',",
+
+        "targetFolderPath":"[concat('@concat(''' , parameters('storageTargetBlobFolderPath') , '''','''/'',formatDateTime(adddays(utcnow(),-1),''yyyy''),''/''')]",
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
         "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
         "storageAccName": "[parameters('wpaAppStorageAccName')]",
@@ -344,7 +345,7 @@
                 "enabledForDeployment": true,
                 "enabledForTemplateDeployment": true,
                 "enabledForDiskEncryption": true,
-                "enableRbacAuthorization":true,
+
                 "sku": {
                     "family": "A",
                     "name": "standard"
@@ -354,8 +355,8 @@
                         {
                             "objectId": "[parameters('appServicePrincipalId')]",
                             "tenantId": "[subscription().tenantId]",
-                            "permissions":{"keys":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore"],"secrets":["Get","List","Set","Delete","Recover","Backup","Restore"],"certificates":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore","ManageContacts","ManageIssuers","GetIssuers","ListIssuers","SetIssuers","DeleteIssuers"]},
-                            "applicationId": null
+                            "permissions":{"keys":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore"],"secrets":["Get","List","Set","Delete","Recover","Backup","Restore"],"certificates":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore","ManageContacts","ManageIssuers","GetIssuers","ListIssuers","SetIssuers","DeleteIssuers"]}
+
                         }
 
                     ]
@@ -364,7 +365,7 @@
         },
 
         {
-            "condition": "[not(equals(toLower(parameters('skipVaultCreation')), 'yes'))]",
+
             "comments": "Key Vault Secret",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "name": "[concat(parameters('wpaKeyVaultName'), '/', parameters('wpaReaderAppSecretName'))]",
@@ -399,7 +400,7 @@
                         "type": "AzureBlobStorageLocation",
                         "container": "[parameters('wpaStorageContainerName')]",
                         "folderPath": {
-                            "value": "[concat(parameters('storageTargetBlobFolderPath'),'/', variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
+                            "value": "[concat(variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
                             "type": "Expression"
                         }
                     },
