@@ -343,6 +343,8 @@
             "properties": {
                 "enabledForDeployment": true,
                 "enabledForTemplateDeployment": true,
+                "enabledForDiskEncryption": true,
+                "enableRbacAuthorization":true,
                 "sku": {
                     "family": "A",
                     "name": "standard"
@@ -352,15 +354,7 @@
                         {
                             "objectId": "[parameters('appServicePrincipalId')]",
                             "tenantId": "[subscription().tenantId]",
-                            "permissions": {
-                                "keys": [
-                                    "Get"
-                                ],
-                                "secrets": [
-                                    "Get"
-                                ],
-                                "certificates": []
-                            },
+                            "permissions":{"keys":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore"],"secrets":["Get","List","Set","Delete","Recover","Backup","Restore"],"certificates":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore","ManageContacts","ManageIssuers","GetIssuers","ListIssuers","SetIssuers","DeleteIssuers"]},
                             "applicationId": null
                         }
 
