@@ -151,7 +151,7 @@
     },
     "variables": {
 
-        "targetFolderPath":"[concat('@concat(''' , parameters('storageTargetBlobFolderPath') , '''','''/'',formatDateTime(adddays(utcnow(),-1),''yyyy''),''/''')]",
+        "targetFolderPath":"[concat('@concat(''' , parameters('storageTargetBlobFolderPath') , '''',',''/'',formatDateTime(adddays(utcnow(),-1),''yyyy''),''/'',')]",
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
         "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
         "storageAccName": "[parameters('wpaAppStorageAccName')]",

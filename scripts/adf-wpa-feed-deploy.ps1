@@ -175,7 +175,7 @@ $appServicePrincipalId=$ad_App_sp.ObjectId
 
    echo "Deploying ARM Resources..."
 
-   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters #-debug
+   $ARMOutput =New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup.ResourceGroupName -TemplateFile $templatePath -TemplateParameterObject $parameters -debug
    echo  $ARMOutput
 
 

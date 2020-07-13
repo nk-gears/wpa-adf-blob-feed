@@ -4,7 +4,7 @@
     "parameters":{
 
         "skipStorageCreation":{
-            "value":"No"
+            "value":"Yes"
         },
 
         "wpaReaderAppSecretName":{
@@ -15,13 +15,13 @@
         },
 
         "wpaKeyVaultName":{
-            "value":"NkSecretVault"
+            "value":"NkSecretValt"
         },
         "wpaAppStorageAccType":{
             "value":"Standard_LRS"
         },
         "wpaAppStorageAccName":{
-            "value":"wpankjul"
+            "value":"wpastoragenkjul"
         },
 
         "storageTargetBlobFolderPath":{
