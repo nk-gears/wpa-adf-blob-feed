@@ -64,10 +64,5 @@ If ($ad_app -eq $null) {
 	echo "Deployment is in Progress.."
 	Start-Sleep -s 20
 	$ad_app=Get-AzureADApplication -Filter "displayName eq '$reader_app_name'"
-    if(!$ad_app){
-        echo "App Registration  Completed."
 
-    }else{
-        echo "Error registering app."
-    }
-
+    echo "App Registration  Completed. Please use ./show-app-info.ps1 to view the AppId after few minutes."
