@@ -400,7 +400,8 @@
                         "type": "AzureBlobStorageLocation",
                         "container": "[parameters('wpaStorageContainerName')]",
                         "fileName": "@concat(formatDateTime(utcnow(), 'y-M-d h_m_s'), '.csv')",
-                        "folderPath": "@concat(parameters('storageTargetBlobFolderPath'))"
+                        "folderPath": "[parameters('storageTargetBlobFolderPath')]"
+
 
                     },
                     "columnDelimiter": ",",
