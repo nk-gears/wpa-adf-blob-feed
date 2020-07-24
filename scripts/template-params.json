@@ -4,32 +4,32 @@
     "parameters":{
 
         "skipStorageCreation":{
-            "value":"Yes"
+            "value":"No"
         },
 
         "wpaReaderAppSecretName":{
-            "value":"NKAppWpaSecret"
+            "value":"NKAppWpaSecre"
         },
         "skipVaultCreation":{
             "value":"No"
         },
 
         "wpaKeyVaultName":{
-            "value":"NkSecretValt"
+            "value":"NkSecretVol"
         },
         "wpaAppStorageAccType":{
             "value":"Standard_LRS"
         },
         "wpaAppStorageAccName":{
-            "value":"wpastoragenkjul"
+            "value":"wpann1"
         },
 
         "storageTargetBlobFolderPath":{
-            "value":"rawdata"
+            "value":"rawdata1"
         },
 
         "wpaAppDataFactoryName":{
-            "value":"P12GADF"
+            "value":"NKP12GADF"
         },
 
         "wpaADFJobName":{
