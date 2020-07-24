@@ -151,7 +151,7 @@
     },
     "variables": {
 
-        "targetFolderPath":"[concat('@concat(''' , parameters('storageTargetBlobFolderPath') , '''',',''/'',formatDateTime(adddays(utcnow(),-1),''yyyy''),''/'',')]",
+
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('wpaAppDataFactoryName'),uniqueString(resourceGroup().id))]",
         "factoryName":  "[concat(parameters('wpaAppDataFactoryName'), uniqueString(resourceGroup().id))]",
         "storageAccName": "[parameters('wpaAppStorageAccName')]",
@@ -399,10 +399,9 @@
                     "location": {
                         "type": "AzureBlobStorageLocation",
                         "container": "[parameters('wpaStorageContainerName')]",
-                        "folderPath": {
-                            "value": "[concat(variables('targetFolderPath'),'''',parameters('wpaADFJobName'),''')')]",
-                            "type": "Expression"
-                        }
+                        "fileName": "@concat(formatDateTime(utcnow(), 'y-M-d h_m_s'), '.csv')",
+                        "folderPath": "@concat(parameters('storageTargetBlobFolderPath'))"
+
                     },
                     "columnDelimiter": ",",
                     "escapeChar": "\\",
